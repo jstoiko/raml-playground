@@ -1,0 +1,46 @@
+#%RAML 1.0
+title: Pokemon API
+description: Pokemon information API
+version: v1
+baseUri: https://localhost:3000/{version}
+mediaType: application/vnd.api+json
+
+uses:
+  api: libraries/jsonApiLibrary.raml
+  col: libraries/jsonApiCollections.raml
+
+types:
+  PokemonAttrs:
+    displayName: PokemonAttrs
+    description: Pokemon attributes without any meta, type, id, etc.
+    type: api.attributes
+    properties:
+      name: string
+      generation: number
+      types: string[]
+      species: string
+      abilities: string[]
+      weightKg: number
+  Pokemon:
+    type: api.resource
+    description: Pokemon type
+    properties:
+      attributes:
+        type: PokemonAttrs
+
+/pokemon:
+  type:
+    col.collection:
+      dataType: Pokemon
+      dataTypePost: Pokemon
+      exampleCollection: !include examples/PokemonCollectionExample.json
+      exampleItem: !include examples/PokemonItemExample.json
+  get:
+    is: [ col.sortable ]
+
+  /{id}:
+    type:
+      col.item:
+        dataType: Pokemon
+        dataTypePatch: Pokemon
+        exampleItem: !include examples/PokemonItemExample.json
